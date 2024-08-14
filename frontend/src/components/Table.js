@@ -1,4 +1,7 @@
 import {useState,useEffect} from "react"
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 export default function Table() {
 
@@ -11,36 +14,38 @@ export default function Table() {
         .catch(err => console.log(err))
     }
 
+    const [colDefs, setColDefs] = useState([
+        { headerName:"Rank", valueGetter: "node.rowIndex + 1" },
+        { headerName: "Name", field: "player.name" },
+        { headerName: "", field: "player.position" },
+        { headerName: "", field: "player.maybeTeam"},
+      ]);
+
     //always runs first
     useEffect( () => {
         fetchData()
     },[]
     )
 
-    const TableContents = () => {
-        return (
-            <tbody>
-                {
-                    tableData?.map((item,index) => (
-                        <tr>
-                            <td value={item.overallRank}>{item.overallRank}</td>
-                            <td value={item.player.name}>{item.player.name}</td>
-                        </tr>
-                    ))
-                }
-            </tbody>
-        )
+    // Function to refresh cells after being dragged to reflect new rank
+    function updateRank(e){
+        e.api.refreshCells();
     }
 
     return (
-        <>
-            <table>
-                <thead>
-                    <th>Rank</th>
-                    <th>Name</th>
-                </thead>
-                <TableContents/>
-            </table>
-        </>
-    )
+        // wrapping container with theme & size
+        <div
+         className="ag-theme-quartz-dark" // applying the Data Grid theme
+         style={{ height: 500 }} // the Data Grid will fill the size of the parent container
+        >
+          <AgGridReact
+              rowData={tableData}
+              columnDefs={colDefs}
+              rowDragManaged={true}
+              rowDragEntireRow={true}
+              rowDragText={()=>{return '';}}
+              onRowDragEnd={updateRank} //refresh rank column after player has been moved
+          />
+        </div>
+       )
 }
