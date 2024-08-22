@@ -15,10 +15,10 @@ export default function Table() {
     }
 
     const [colDefs, setColDefs] = useState([
-        { headerName:"Rank", valueGetter: "node.rowIndex + 1" },
-        { headerName: "Name", field: "player.name" },
-        { headerName: "", field: "player.position" },
-        { headerName: "", field: "player.maybeTeam"},
+        { headerName:"Rank", valueGetter: "node.rowIndex + 1", resizable: false, width: 75, sortable: false },
+        { headerName: "Name", field: "player.name", resizable: false, sortable: false },
+        { headerName: "", field: "player.position", resizable: false, width: 75, sortable: false },
+        { headerName: "", field: "player.maybeTeam", resizable: false, width: 75, sortable: false },
       ]);
 
     //always runs first
